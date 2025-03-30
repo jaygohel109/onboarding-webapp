@@ -1,0 +1,23 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./Pages/HomePage"; // ✅ Updated Import
+import Onboarding from "./Pages/OnboardingPage"; // ✅ Updated Import
+import OnboardingStep2 from "./Pages/OnboardingStep2";
+import OnboardingStep3 from "./Pages/OnboardingStep3";
+import AdminPanel from "./Pages/AdminPanel"; // ✅ New Import
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/onboarding-step2" element={<OnboardingStep2 />} />
+        <Route path="/onboarding-step3" element={<OnboardingStep3 />} />
+        <Route path="/admin" element={<AdminPanel />} /> {/* ✅ Admin Panel */}
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;

@@ -1,0 +1,65 @@
+/* OnboardingStep2.css */
+
+.onboarding-step2-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #3a3a3a, #1f1f1f);
+  }
+  
+  .onboarding-step2-card {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 400px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+  
+  .onboarding-heading {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .onboarding-input {
+    width: 90%;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #4c4c4c;
+  }
+  
+  .onboarding-input::placeholder {
+    color: #d3d3d3;
+  }
+  
+  .onboarding-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #1e90ff;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .onboarding-btn:hover {
+    background-color: #4682b4;
+  }
+  
+  .onboarding-btn:focus {
+    outline: none;
+  }
+  
+  .error-text {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: -10px;
+  }

@@ -1,0 +1,73 @@
+
+.admin-panel-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #3a3a3a, #1f1f1f);
+  }
+  
+  .admin-panel-card {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 400px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+  
+  .admin-panel-heading {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .subheading {
+    font-size: 1.2rem;
+    color: #bbb;
+    margin-bottom: 10px;
+  }
+  
+  .field-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+  
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .checkbox-input {
+    margin-right: 10px;
+    accent-color: #1e90ff;
+  }
+  
+  .checkbox-text {
+    font-size: 1.1rem;
+    color: #ccc;
+  }
+  
+  .save-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #1e90ff;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .save-btn:hover {
+    background-color: #4682b4;
+  }
+  
+  .save-btn:focus {
+    outline: none;
+  }
