@@ -1,0 +1,30 @@
+.step-header {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 15px;
+    background-color: #000000;
+    border-bottom: 2px solid #333333;
+  }
+  
+  .step-item {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  
+  .step-link {
+    text-decoration: none;
+    color: #555;
+  }
+  
+  .step-item.active {
+    background-color: #007bff;
+    color: white;
+    pointer-events: none;
+  }
+  
+  .step-item.active .step-link {
+    color: white;
+  }

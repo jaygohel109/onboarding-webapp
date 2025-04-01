@@ -75,3 +75,4 @@ async def update_user_onboarding_step2(user_id: str, step2_data: dict):
         {"_id": ObjectId(user_id)},  # Convert string ID to ObjectId
         {"$set": {"onboarding_step2_data": step2_data}}
     )
+

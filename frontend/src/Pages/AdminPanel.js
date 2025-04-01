@@ -16,32 +16,29 @@ const AdminPanel = () => {
   ];
 
   useEffect(() => {
-    // Load existing config from localStorage
+    // Load from localStorage
     const savedStep2 = JSON.parse(localStorage.getItem("step2Fields")) || ["aboutMe", "birthdate"];
     const savedStep3 = JSON.parse(localStorage.getItem("step3Fields")) || ["street", "city", "state", "zip"];
     const savedFieldRequirements = JSON.parse(localStorage.getItem("fieldRequirements")) || {};
+
     setStep2Fields(savedStep2);
     setStep3Fields(savedStep3);
     setFieldRequirements(savedFieldRequirements);
   }, []);
 
   const handleFieldChange = (step, fieldId) => {
-    // Function to update fields
     const updateFields = (currentStepFields, otherStepFields, fieldId) => {
-      // If field is checked, add to the current step and remove from the other step
       if (currentStepFields.includes(fieldId)) {
-        return currentStepFields.filter((id) => id !== fieldId); // Remove from current step
+        return currentStepFields.filter((id) => id !== fieldId); // Remove field
       } else {
-        const updatedOtherStepFields = otherStepFields.filter((id) => id !== fieldId); // Remove from other step
-        return [...currentStepFields, fieldId]; // Add to current step
+        return [...currentStepFields, fieldId]; // Add field
       }
     };
 
     if (step === 2) {
       setStep2Fields((prevFields) => {
         const updatedFields = updateFields(prevFields, step3Fields, fieldId);
-        // Instant update of step 2 and remove from step 3
-        setStep3Fields((prevStep3Fields) => prevStep3Fields.filter((id) => id !== fieldId));
+        setStep3Fields((prev) => prev.filter((id) => id !== fieldId)); // Remove from Step 3
         return updatedFields;
       });
     }
@@ -49,23 +46,32 @@ const AdminPanel = () => {
     if (step === 3) {
       setStep3Fields((prevFields) => {
         const updatedFields = updateFields(prevFields, step2Fields, fieldId);
-        // Instant update of step 3 and remove from step 2
-        setStep2Fields((prevStep2Fields) => prevStep2Fields.filter((id) => id !== fieldId));
+        setStep2Fields((prev) => prev.filter((id) => id !== fieldId)); // Remove from Step 2
         return updatedFields;
       });
     }
-  };
-  const handleRequiredChange = (fieldId) => {
+
+    // Remove Required flag only if field is removed from both steps
     setFieldRequirements((prev) => {
-      const newRequirements = { ...prev, [fieldId]: !prev[fieldId] }; // Toggle the required status
-      localStorage.setItem("fieldRequirements", JSON.stringify(newRequirements));
+      const newRequirements = { ...prev };
+      if (!step2Fields.includes(fieldId) && !step3Fields.includes(fieldId)) {
+        delete newRequirements[fieldId];
+      }
       return newRequirements;
     });
   };
-  
+
+  const handleRequiredChange = (fieldId) => {
+    setFieldRequirements((prev) => ({
+      ...prev,
+      [fieldId]: !prev[fieldId], // Toggle required flag
+    }));
+  };
+
   const handleSave = () => {
     localStorage.setItem("step2Fields", JSON.stringify(step2Fields));
     localStorage.setItem("step3Fields", JSON.stringify(step3Fields));
+    localStorage.setItem("fieldRequirements", JSON.stringify(fieldRequirements));
     alert("Onboarding fields updated!");
   };
 
@@ -86,15 +92,17 @@ const AdminPanel = () => {
               />
               <span className="checkbox-text">{label}</span>
             </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={fieldRequirements[id] || false}
-                onChange={() => handleRequiredChange(id)}
-                className="checkbox-input"
-              />
-              <span className="checkbox-text">Required</span>
-            </label>
+            {step2Fields.includes(id) && ( // Required only if field is selected
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={fieldRequirements[id] || false}
+                  onChange={() => handleRequiredChange(id)}
+                  className="checkbox-input"
+                />
+                <span className="checkbox-text">Required</span>
+              </label>
+            )}
           </div>
         ))}
 
@@ -110,18 +118,19 @@ const AdminPanel = () => {
               />
               <span className="checkbox-text">{label}</span>
             </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={fieldRequirements[id] || false}
-                onChange={() => handleRequiredChange(id)}
-                className="checkbox-input"
-              />
-              <span className="checkbox-text">Required</span>
-            </label>
+            {step3Fields.includes(id) && ( // Required only if field is selected
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={fieldRequirements[id] || false}
+                  onChange={() => handleRequiredChange(id)}
+                  className="checkbox-input"
+                />
+                <span className="checkbox-text">Required</span>
+              </label>
+            )}
           </div>
         ))}
-
 
         <button onClick={handleSave} className="save-btn">
           Save Configuration
