@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from datetime import date
 
+
 class User(BaseModel):
     id: Optional[str]  # For MongoDB, we'll use string as object ID
     username: str
@@ -13,9 +14,18 @@ class User(BaseModel):
     # onboarding_step2_data: Optional[dict] = None
     # onboarding_step3_data: Optional[dict] = None
 
-class FieldRequirement(BaseModel):
-    field_name: str
-    required: bool
+
+class FieldData(BaseModel):
+    id: str  # Ensure _id is part of the model
+    name: str
+    is_required: bool
+    page: int
+
+class FieldUpdate(BaseModel):
+    id: str  # The unique identifier for the field, typically a MongoDB ObjectId in string format
+    name: str  # The label/name of the field
+    is_required: bool  # Boolean to indicate if the field is required
+    page: int  # The page (step) the field belongs to (e.g., Step 2 or Step 3)
 
 class UserCreateRequest(BaseModel):
     username: str
@@ -33,3 +43,12 @@ class OnboardingStep(BaseModel):
     state: Optional[str] = Field(None, title="State", max_length=50)
     zip: Optional[str] = Field(None, title="ZIP Code", max_length=20)
     birthdate: Optional[str] = Field(None, title="Birthdate (YYYY-MM-DD)", pattern=r"\d{4}-\d{2}-\d{2}")
+
+class OnboardingData(BaseModel):
+    username: str
+    aboutMe: str
+    street: str
+    city: str
+    state: str
+    zip: str
+    birthdate: str

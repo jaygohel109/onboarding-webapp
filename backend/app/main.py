@@ -1,8 +1,8 @@
 # app/main.py
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from fastapi import FastAPI, HTTPException, Body, Depends, status
-from .database import get_user_by_username, create_user, get_field_requirements, update_user_onboarding_step2, db
-from .models import User, FieldRequirement,UserCreateRequest, OnboardingStep
+from .database import get_user_by_username, create_user , update_user_onboarding_step2, db,update_field_in_db
+from .models import User,UserCreateRequest, OnboardingStep, FieldData, OnboardingData
 from typing import List
 from .utils import create_access_token, verify_password, SECRET_KEY, ALGORITHM
 import jwt
@@ -40,7 +40,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     
     return user_id  # You can return the user or other necessary info
 
-@app.post("/login/")
+@app.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await get_user_by_username(form_data.username)
     print(f"User from DB: {user}")  # Debug statement to check the retrieved user
@@ -55,16 +55,13 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(data={"sub": user.id})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.post("/users/")
+@app.post("/users")
 async def register_user(user_data: UserCreateRequest):
     response = await create_user(user_data.username, user_data.password)
     if "error" in response:
         raise HTTPException(status_code=400, detail=response["error"])
     return response
 
-@app.get("/field-requirements/", response_model=List[FieldRequirement])
-async def get_field_requirements_list():
-    return await get_field_requirements()
 
 @app.put("/users/{user_id}/onboarding-step2")
 async def update_onboarding_step2(user_id: str, step2_data: dict = Body(...)):
@@ -74,9 +71,89 @@ async def update_onboarding_step2(user_id: str, step2_data: dict = Body(...)):
     await update_user_onboarding_step2(user_id, step2_data)
     return {"msg": "Onboarding step 2 data updated successfully"}
 
-@app.get("/protected/")
+@app.get("/protected")
 async def protected_route(current_user: str = Depends(get_current_user)):
     return {"message": f"Hello {current_user}, you are authorized!"}
+
+@app.get("/fields", response_model=List[dict])
+async def get_fields():
+    # Use aggregation pipeline to convert ObjectId to string directly in the query
+    pipeline = [
+        {
+            "$project": {
+                "_id": {"$toString": "$_id"},  # Convert ObjectId to string
+                # Include all other fields from the document
+                "name": 1,
+                "is_required": 1,
+                "page": 1
+            }
+        }
+    ]
+    fields_cursor = db["fields"].aggregate(pipeline)
+    fields = await fields_cursor.to_list(length=100)  # Limit the number of records to 100
+    
+    # Return the fields data
+    return fields
+
+@app.post("/update-fields")
+async def update_fields(fields: list[FieldData]):
+    try:
+        print(f"Received fields: {fields}")  # Debug statement to check the received fields
+        # Process each field and update the database
+        for field in fields:
+            # Example: Update the field in the database based on the field name
+            await update_field_in_db(field)
+        
+        return {"message": "Fields updated successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.get("/all-data", response_model=List[OnboardingData])
+async def get_all_onboarding_data():
+    try:
+        # MongoDB aggregation pipeline to join users and onboarding data
+        aggregation_pipeline = [
+            {
+                "$addFields": {
+                    "user_id": { "$toObjectId": "$user_id" }
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "users", 
+                    "localField": "user_id",  
+                    "foreignField": "_id", 
+                    "as": "user_info" 
+                }
+            },
+            {
+                "$unwind": "$user_info"
+            },
+            {
+                "$project": {
+                    "username": "$user_info.username",
+                    "aboutMe": 1,
+                    "street": 1,
+                    "city": 1,
+                    "state": 1,
+                    "zip": 1,
+                    "birthdate": 1,
+                }
+            }
+            ]
+
+        # Execute the aggregation
+        result = await db["onboarding_steps"].aggregate(aggregation_pipeline).to_list(length=None)
+
+        if not result:
+            raise HTTPException(status_code=404, detail="No onboarding data found")
+
+        return result
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching onboarding data: {str(e)}")
+
 
 @app.post("/onboarding/step2")
 async def submit_onboarding_step2(

@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from .models import User, FieldRequirement
+from .models import User, FieldUpdate
 import os
 from dotenv import load_dotenv
 from typing import List
@@ -64,10 +64,6 @@ async def create_user(username: str, password: str) -> dict:
     user = await db["users"].insert_one(user_data)
     return {"id": str(user.inserted_id), "username": username}
 
-# Get required fields
-async def get_field_requirements() -> List[FieldRequirement]:
-    fields = await db["field_requirements"].find().to_list(length=100)
-    return [FieldRequirement(**field) for field in fields]
 
 # Update user onboarding step 2
 async def update_user_onboarding_step2(user_id: str, step2_data: dict):
@@ -76,3 +72,33 @@ async def update_user_onboarding_step2(user_id: str, step2_data: dict):
         {"$set": {"onboarding_step2_data": step2_data}}
     )
 
+async def update_field_in_db(field: FieldUpdate):
+    """
+    Updates a specific field's requirements and step information in the MongoDB database.
+
+    :param field: The FieldUpdate object containing the field information to be updated.
+    """
+    try:
+        # Update field requirements and step (page) in the database
+        print(field) 
+        result = await db["fields"].update_one(
+            {"_id": ObjectId(field.id)},  # Find the field by its _id
+            {
+                "$set": {
+                    "is_required": field.is_required,  # Update required status
+                    "page": field.page,  # Update step (page) the field belongs to
+                    "name": field.name,  # Update the field label (if necessary)
+                }
+            }
+        )
+
+        if result.matched_count == 0:
+            print(f"No field found with _id: {field._id}")
+            return {"error": "Field not found"}
+        
+        print(f"Field updated successfully: {field.id}")
+        return {"message": f"Field '{field.name}' updated successfully."}
+
+    except Exception as e:
+        print(f"Error updating field: {str(e)}")
+        return {"error": f"Error updating field: {str(e)}"}

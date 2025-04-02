@@ -13,7 +13,7 @@ const OnboardingStep3 = () => {
 
   useEffect(() => {
     // Load Admin Configurations from localStorage
-    const step3Config = JSON.parse(localStorage.getItem("step3Fields")) || ["street", "city", "state", "zip"];
+    const step3Config = JSON.parse(localStorage.getItem("step3FieldNames")) || ["street", "city", "state", "zip"];
     setFields(step3Config);
 
     // Load Step 2 data from localStorage to merge with Step 3

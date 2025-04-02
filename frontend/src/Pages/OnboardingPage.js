@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api"; // Import the Axios instance
 import "../CSS/Onboarding.css"; // Import custom CSS
@@ -10,6 +10,47 @@ const Onboarding = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Fetch fields for step 2 and step 3
+  const fetchFields = async () => {
+    try {
+      // Call the API to get field requirements (for step 2 and step 3)
+      const response = await api.get("/fields");
+  
+      // Filter fields based on page number
+      const step2Fields = response.data.filter(field => field.page === 2);
+      const step3Fields = response.data.filter(field => field.page === 3);
+  
+      // Extract only the field names for each page
+      const step2FieldNames = step2Fields.map(field => field.name);
+      const step3FieldNames = step3Fields.map(field => field.name);
+  
+      // Store field names separately in localStorage
+      localStorage.setItem("step2FieldNames", JSON.stringify(step2FieldNames));
+      localStorage.setItem("step3FieldNames", JSON.stringify(step3FieldNames));
+  
+      // Store all field data together in one variable
+      const allFieldsData = [...step2Fields, ...step3Fields];
+      localStorage.setItem("allFieldsData", JSON.stringify(allFieldsData));
+
+      // Store field requirements (is_required) in a separate variable
+      const fieldRequirements = response.data.reduce((acc, field) => {
+        acc[field.name] = field.is_required;
+        return acc;
+      }, {});
+
+      // Store field requirements in localStorage
+      localStorage.setItem("fieldRequirements", JSON.stringify(fieldRequirements));
+  
+    } catch (err) {
+      console.error("Error fetching fields:", err);
+    }
+  };
+
+  // Call fetchFields when the component mounts
+  useEffect(() => {
+    fetchFields();
+  }, []);
+
   const handleNext = async () => {
     if (!email || !password) {
       setError("Please fill in all fields.");
@@ -18,10 +59,10 @@ const Onboarding = () => {
 
     try {
       // Step 1: Register the user
-      await api.post("/users/", { username: email, password });
+      await api.post("/users", { username: email, password });
 
       // Step 2: Automatically log in the user
-      const loginResponse = await api.post("/login/", new URLSearchParams({
+      const loginResponse = await api.post("/login", new URLSearchParams({
         username: email,
         password,
       }));

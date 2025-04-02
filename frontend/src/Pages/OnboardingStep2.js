@@ -12,7 +12,7 @@ const OnboardingStep2 = () => {
 
   useEffect(() => {
     // Load Admin Configurations from localStorage
-    const step2Config = JSON.parse(localStorage.getItem("step2Fields")) || ["aboutMe", "birthdate"];
+    const step2Config = JSON.parse(localStorage.getItem("step2FieldNames")) || ["aboutMe", "birthdate"];
     setFields(step2Config);
 
     const fieldRequirements = JSON.parse(localStorage.getItem("fieldRequirements")) || {};
