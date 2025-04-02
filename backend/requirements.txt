@@ -172,3 +172,4 @@ websockets==10.4
 Werkzeug==3.0.0
 widgetsnbextension==4.0.10
 zipp==3.17.0
+certifi==2024.2.2

@@ -7,14 +7,14 @@ import urllib.parse
 from bson import ObjectId
 from passlib.context import CryptContext
 from urllib.parse import quote_plus
+import certifi  # Add this import
 from .utils import hash_password
+
 # Password hashing setup
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Load environment variables
 load_dotenv()
-
-# Retrieve the MongoDB connection string
 
 # Retrieve environment variables
 USERNAME = os.getenv("USERNAME")
@@ -29,8 +29,12 @@ PASSWORD = quote_plus(PASSWORD)
 DATABASE_URL = DATABASE_URL.format(username=USERNAME, password=PASSWORD)
 print(f"Connecting to MongoDB at: {DATABASE_URL}")
 
-# Initialize MongoDB client
-client = AsyncIOMotorClient(DATABASE_URL)
+# Initialize MongoDB client with proper SSL configuration
+client = AsyncIOMotorClient(
+    DATABASE_URL,
+    tlsCAFile=certifi.where(),  # Add this parameter
+    serverSelectionTimeoutMS=5000  # Optional: sets a timeout for server selection
+)
 db = client["onboarding_db"]
 
 # Get user by username
