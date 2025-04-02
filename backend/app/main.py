@@ -15,7 +15,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://onboard-flow.netlify.app/"
+        "https://onboard-flow.netlify.app"
     ],  # Change this if your frontend runs elsewhere
     allow_credentials=True,
     allow_methods=["*"],  # Allows GET, POST, PUT, DELETE, etc.
