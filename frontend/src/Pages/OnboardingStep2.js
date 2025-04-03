@@ -51,6 +51,7 @@ const OnboardingStep2 = () => {
 
           {fields.includes("aboutMe") && (
             <div className="form-group">
+              <label className="onboarding-label">About Me</label>
               <textarea
                 name="aboutMe"
                 placeholder="Tell us about yourself..."
@@ -64,6 +65,7 @@ const OnboardingStep2 = () => {
 
           {fields.includes("street") && (
             <div className="form-group">
+              <label className="onboarding-label">Street Address</label>
               <input
                 type="text"
                 name="street"
@@ -78,6 +80,7 @@ const OnboardingStep2 = () => {
 
           {fields.includes("city") && (
             <div className="form-group">
+              <label className="onboarding-label">City</label>
               <input
                 type="text"
                 name="city"
@@ -92,6 +95,7 @@ const OnboardingStep2 = () => {
 
           {fields.includes("state") && (
             <div className="form-group">
+              <label className="onboarding-label">State</label>
               <input
                 type="text"
                 name="state"
@@ -106,6 +110,7 @@ const OnboardingStep2 = () => {
 
           {fields.includes("zip") && (
             <div className="form-group">
+              <label className="onboarding-label">ZIP Code</label>
               <input
                 type="text"
                 name="zip"
@@ -120,6 +125,7 @@ const OnboardingStep2 = () => {
 
           {fields.includes("birthdate") && (
             <div className="form-group">
+              <label className="onboarding-label">Birthdate</label>
               <input
                 type="date"
                 name="birthdate"

@@ -74,7 +74,7 @@ const Onboarding = () => {
       // Step 4: Navigate to onboarding step 2
       navigate("/onboarding-step2");
     } catch (err) {
-      setError(err.response?.data?.detail || "Error occurred during onboarding.");
+      setError(err.response?.data?.detail || "User already exists or invalid credentials.");
     }
   };
 
@@ -85,6 +85,7 @@ const Onboarding = () => {
         <div className="onboarding-card">
           <h2 className="onboarding-heading">Step 1: Account Setup</h2>
           {error && <p className="error-message">{error}</p>}
+          <label className="onboarding-label">Email</label>
           <input
             type="email"
             placeholder="Enter your email"
@@ -92,6 +93,7 @@ const Onboarding = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          <label className="onboarding-label">Password</label>
           <input
             type="password"
             placeholder="Enter your password"

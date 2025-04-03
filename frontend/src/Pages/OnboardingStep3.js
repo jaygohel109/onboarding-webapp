@@ -9,6 +9,8 @@ const OnboardingStep3 = () => {
   const [formData, setFormData] = useState({});
   const [fields, setFields] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [fieldRequirements, setFieldRequirements] = useState({});
   const [submitError, setSubmitError] = useState(null);  // For handling form submission errors
 
   useEffect(() => {
@@ -19,6 +21,9 @@ const OnboardingStep3 = () => {
     // Load Step 2 data from localStorage to merge with Step 3
     const step2Data = JSON.parse(localStorage.getItem("onboardingStep2Data")) || {};
     setFormData(step2Data); // Merge Step 2 data into formData
+
+    const fieldRequirements = JSON.parse(localStorage.getItem("fieldRequirements")) || {};
+    setFieldRequirements(fieldRequirements); 
   }, []);
 
   const handleChange = (e) => {
@@ -28,17 +33,32 @@ const OnboardingStep3 = () => {
   const handleSubmit = async () => {
     setLoading(true);
     setSubmitError(null);
-
+  
+    // Validation logic to check if required fields are filled
+    const newErrors = {};
+    fields.forEach((field) => {
+      if (fieldRequirements[field] && !formData[field]?.trim()) {
+        newErrors[field] = `${field} is required`;
+      }
+    });
+  
+    // If there are errors, show them and STOP form submission
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setLoading(false); // Reset loading state
+      return; // Stop execution here
+    } else {
+      setErrors({}); // Clear errors if none
+    }
+  
     try {
-      // Merge Step 3 data with the already existing Step 2 data
       localStorage.setItem("onboardingStep3Data", JSON.stringify(formData));
-      
-      // Submit the final merged onboarding data to the backend
+  
       const response = await api.post("/onboarding/step2", formData);
-
+  
       if (response.data.message === "Onboarding data saved successfully!") {
         alert("Onboarding Complete!");
-        navigate("/");  // Redirect to the home page after completion
+        navigate("/"); // Redirect to the home page
       } else {
         setSubmitError("Error saving onboarding data. Please try again.");
       }
@@ -49,6 +69,7 @@ const OnboardingStep3 = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <div>
@@ -58,67 +79,91 @@ const OnboardingStep3 = () => {
           <h2 className="onboarding-heading">Onboarding - Step 3</h2>
 
           {fields.includes("aboutMe") && (
-            <textarea
-              name="aboutMe"
-              placeholder="Tell us about yourself..."
-              className="onboarding-input"
-              value={formData.aboutMe || ""}
-              onChange={handleChange}
-            />
+            <div className="form-group">
+              <label className="onboarding-label">About Me</label>
+              <textarea
+                name="aboutMe"
+                placeholder="Tell us about yourself..."
+                className="onboarding-input"
+                value={formData.aboutMe || ""}
+                onChange={handleChange}
+              />
+              {errors.aboutMe && <p className="error-text">{errors.aboutMe}</p>}
+            </div>
           )}
 
           {fields.includes("street") && (
-            <input
-              type="text"
-              name="street"
-              placeholder="Street Address"
-              className="onboarding-input"
-              value={formData.street || ""}
-              onChange={handleChange}
-            />
+            <div className="form-group">
+              <label className="onboarding-label">Street Address</label>
+              <input
+                type="text"
+                name="street"
+                placeholder="Street Address"
+                className="onboarding-input"
+                value={formData.street || ""}
+                onChange={handleChange}
+              />
+              {errors.street && <p className="error-text">{errors.street}</p>}
+            </div>
           )}
 
           {fields.includes("city") && (
-            <input
-              type="text"
-              name="city"
-              placeholder="City"
-              className="onboarding-input"
-              value={formData.city || ""}
-              onChange={handleChange}
-            />
+            <div className="form-group">
+              <label className="onboarding-label">City</label>
+              <input
+                type="text"
+                name="city"
+                placeholder="City"
+                className="onboarding-input"
+                value={formData.city || ""}
+                onChange={handleChange}
+              />
+              {errors.city && <p className="error-text">{errors.city}</p>}
+            </div>
           )}
 
           {fields.includes("state") && (
-            <input
-              type="text"
-              name="state"
-              placeholder="State"
-              className="onboarding-input"
-              value={formData.state || ""}
-              onChange={handleChange}
-            />
+            <div className="form-group">
+              <label className="onboarding-label">State</label>
+              <input
+                type="text"
+                name="state"
+                placeholder="State"
+                className="onboarding-input"
+                value={formData.state || ""}
+                onChange={handleChange}
+              />
+              {errors.state && <p className="error-text">{errors.state}</p>}
+            </div>
           )}
 
           {fields.includes("zip") && (
-            <input
-              type="text"
-              name="zip"
-              placeholder="ZIP Code"
-              className="onboarding-input"
-              value={formData.zip || ""}
-              onChange={handleChange}
-            />
+            <div className="form-group">
+              <label className="onboarding-label">ZIP Code</label>
+              <input
+                type="text"
+                name="zip"
+                placeholder="ZIP Code"
+                className="onboarding-input"
+                value={formData.zip || ""}
+                onChange={handleChange}
+              />
+              {errors.zip && <p className="error-text">{errors.zip}</p>}
+            </div>
           )}
 
           {fields.includes("birthdate") && (
-            <input
-              type="date"
-              name="birthdate"
-              className="onboarding-input"
-              value={formData.birthdate || ""}
-              onChange={handleChange}
-            />
+            <div className="form-group">
+              <label className="onboarding-label">Birthdate</label>
+              <input
+                type="date"
+                name="birthdate"
+                className="onboarding-input"
+                value={formData.birthdate || ""}
+                onChange={handleChange}
+              />
+              {errors.birthdate && <p className="error-text">{errors.birthdate}</p>}
+            </div>
           )}
 
           <button
