@@ -45,10 +45,11 @@ class OnboardingStep(BaseModel):
     birthdate: Optional[str] = Field(None, title="Birthdate (YYYY-MM-DD)", pattern=r"\d{4}-\d{2}-\d{2}")
 
 class OnboardingData(BaseModel):
-    username: str
-    aboutMe: str
-    street: str
-    city: str
-    state: str
-    zip: str
-    birthdate: str
+    _id: Optional[str] = None
+    username: Optional[str] = None
+    aboutMe: Optional[str] = None
+    street: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    zip: Optional[str] = None
+    birthdate: Optional[str] = None

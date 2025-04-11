@@ -23,6 +23,11 @@ const OnboardingData = () => {
     fetchOnboardingData();
   }, []);
 
+  // Helper function to display cell content
+  const displayCellContent = (content) => {
+    return content === null || content === undefined ? "N/A" : content;
+  };
+
   if (loading) return <div className="onboarding-loading">Loading...</div>;
   if (error) return <div className="onboarding-error">{error}</div>;
 
@@ -45,13 +50,13 @@ const OnboardingData = () => {
           <tbody>
             {data.map((item, index) => (
               <tr key={index}>
-                <td>{item.username}</td>
-                <td>{item.aboutMe}</td>
-                <td>{item.street}</td>
-                <td>{item.city}</td>
-                <td>{item.state}</td>
-                <td>{item.zip}</td>
-                <td>{item.birthdate}</td>
+                <td>{displayCellContent(item.username)}</td>
+                <td>{displayCellContent(item.aboutMe)}</td>
+                <td>{displayCellContent(item.street)}</td>
+                <td>{displayCellContent(item.city)}</td>
+                <td>{displayCellContent(item.state)}</td>
+                <td>{displayCellContent(item.zip)}</td>
+                <td>{displayCellContent(item.birthdate)}</td>
               </tr>
             ))}
           </tbody>
